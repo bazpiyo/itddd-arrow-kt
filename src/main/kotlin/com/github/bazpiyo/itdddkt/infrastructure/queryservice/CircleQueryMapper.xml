@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.bazpiyo.itdddkt.infrastructure.queryservice.CircleQueryMapper">
+    <resultMap id="getCircleMembersResultMap"
+               type="com.github.bazpiyo.itdddkt.infrastructure.queryservice.datamodels.CircleMembersDataModel">
+        <id property="circleId" column="circleId"/>
+        <result property="circleName" column="circleName"/>
+        <result property="ownerId" column="ownerId"/>
+        <result property="ownerName" column="ownerName"/>
+        <result property="ownerType" column="ownerType"/>
+        <collection property="members"
+                    ofType="com.github.bazpiyo.itdddkt.infrastructure.queryservice.datamodels.MemberDataModel">
+            <id property="memberId" column="memberId"/>
+            <result property="memberName" column="memberName"/>
+            <result property="memberType" column="memberType"/>
+        </collection>
+    </resultMap>
+
+    <select id="getCircleMembers" resultMap="getCircleMembersResultMap">
+        select circle.id       as circleId,
+               circle.name     as circleName,
+               circle.owner_id as ownerId,
+               owner.name      as ownerName,
+               owner.type      as ownerType,
+               u.id            as memberId,
+               u.name          as memberName,
+               u.type          as memberType
+        from circles circle
+                 left outer join users owner on circle.owner_id = owner.id
+                 left outer join user_circles usercircle on circle.id = usercircle.circle_id
+                 left outer join users u on u.id = usercircle.user_id
+        limit #{limit} offset #{offset}
+    </select>
+</mapper>

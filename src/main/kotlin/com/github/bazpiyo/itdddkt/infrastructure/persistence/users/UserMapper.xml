@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.bazpiyo.itdddkt.infrastructure.persistence.users.UserMapper">
+    <select id="nextId" resultType="Integer">
+        select nextval('users_id_seq');
+    </select>
+    <select id="findAll"
+            resultType="com.github.bazpiyo.itdddkt.infrastructure.persistence.datamodels.UserDataModel">
+        select *
+        from users
+    </select>
+    <select id="findById"
+            resultType="com.github.bazpiyo.itdddkt.infrastructure.persistence.datamodels.UserDataModel">
+        select *
+        from users t
+        where t.id = #{id.value}
+    </select>
+    <select id="findByIds"
+            resultType="com.github.bazpiyo.itdddkt.infrastructure.persistence.datamodels.UserDataModel">
+        select *
+        from users t
+        where t.id in
+        <foreach item="id" index="index" collection="ids" open="(" separator="," close=")">
+            #{id.value}
+        </foreach>
+
+    </select>
+    <select id="findByName"
+            resultType="com.github.bazpiyo.itdddkt.infrastructure.persistence.datamodels.UserDataModel">
+        select *
+        from users t
+        where t.name = #{userName.value}
+    </select>
+    <insert id="save">
+        insert into users(id, name, type)
+        values (#{user.userId.value}, #{user.userName.value}, #{user.userType.userTypeNumber})
+        on conflict
+            on constraint users_pkey
+            do update set name = #{user.userName.value},
+                          type = #{user.userType.userTypeNumber};
+    </insert>
+    <delete id="delete">
+        delete
+        from users
+        where id = #{userId.value};
+    </delete>
+</mapper>

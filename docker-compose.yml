@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  itddd-kt-db:
+    container_name: itddd-kt-db
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: dev_itddd_kt
+    ports:
+      - 5432:5432
+    volumes:
+      - database:/var/lib/postgresql/data
+
+volumes:
+  database:
+    driver: local

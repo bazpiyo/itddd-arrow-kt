@@ -1,0 +1,17 @@
+server:
+  port: ${SERVER_PORT:8080}
+spring:
+  datasource:
+    username: ${SPRING_DATASOURCE_USERNAME:dev}
+    password: ${SPRING_DATASOURCE_PASSWORD:dev}
+    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/dev_itddd_kt}
+mybatis:
+  config-location: "classpath:mybatis.xml"
+
+api-endpoint:
+  host: ${API_ENDPOINT_HOST:http://localhost:8080}
+  api: ${API_ENDPOINT_API:api}
+  version: ${API_ENDPOINT_VERSION:v1}
+  users: ${API_ENDPOINT_USERS:users}
+  circles: ${API_ENDPOINT_CIRCLES:circles}

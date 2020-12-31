@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.bazpiyo.itdddkt.infrastructure.persistence.circles.CircleMapper">
+    <resultMap id="circleAllResultMap"
+               type="com.github.bazpiyo.itdddkt.infrastructure.persistence.datamodels.CircleDataModel">
+        <id property="id" column="circle_id"/>
+        <result property="name" column="cricle_name"/>
+        <result property="ownerId" column="cricle_owner_id"/>
+        <collection property="member"
+                    ofType="com.github.bazpiyo.itdddkt.infrastructure.persistence.datamodels.UserDataModel">
+            <id property="id" column="member_id"/>
+            <result property="name" column="member_name"/>
+            <result property="type" column="member_type"/>
+        </collection>
+    </resultMap>
+    <select id="nextId" resultType="Integer">
+        select nextval('circles_id_seq');
+    </select>
+    <select id="findById" resultMap="circleAllResultMap">
+        select circle.id       as circle_id,
+               circle.name     as cricle_name,
+               circle.owner_id as cricle_owner_id,
+               member.id       as member_id,
+               member.name     as member_name,
+               member.type     as member_type
+        from circles circle
+                 left outer join user_circles user_circle on circle.id = user_circle.circle_id
+                 left outer join users member on member.id = user_circle.user_id
+        where circle.id = #{circleId.value}
+    </select>
+    <select id="findByName" resultMap="circleAllResultMap">
+        select circle.id       as circle_id,
+               circle.name     as cricle_name,
+               circle.owner_id as cricle_owner_id,
+               member.id       as member_id,
+               member.name     as member_name,
+               member.type     as member_type
+        from circles circle
+                 left outer join user_circles user_circle on circle.id = user_circle.circle_id
+                 left outer join users member on member.id = user_circle.user_id
+        where circle.name = #{circleName.value}
+    </select>
+    <select id="findAll" resultMap="circleAllResultMap"
+    >
+        select circle.id       as circle_id,
+               circle.name     as cricle_name,
+               circle.owner_id as cricle_owner_id,
+               member.id       as member_id,
+               member.name     as member_name,
+               member.type     as member_type
+        from circles circle
+                 left outer join user_circles user_circle on circle.id = user_circle.circle_id
+                 left outer join users member on member.id = user_circle.user_id
+    </select>
+    <insert id="save">
+        insert into circles(id, name, owner_id)
+        VALUES (#{circle.circleId.value}, #{circle.circleName.value}, #{circle.owner.value}) on conflict
+        on constraint circles_pkey
+            do
+        update set name = #{circle.circleName.value},
+            owner_id = #{circle.owner.value};
+    </insert>
+    <insert id="saveMember">
+        insert into user_circles(user_id, circle_id)
+        VALUES (#{userId.value}, #{circleId.value}) on conflict (user_id,circle_id) do
+        update set user_id = #{userId.value},
+            circle_id = #{circleId.value};
+    </insert>
+    <delete id="delete">
+        delete
+        FROM circles t
+        where t.id = #{circleId.value}
+    </delete>
+    <delete id="deleteAllMember">
+        delete
+        FROM user_circles
+        where circle_id = #{circleId.value}
+    </delete>
+    <delete id="deleteMember">
+        delete
+        FROM user_circles
+        where circle_id = #{circleId.value}
+          AND user_id = #{userId.value}
+    </delete>
+</mapper>

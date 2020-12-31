@@ -1,0 +1,12 @@
+logging:
+  level:
+    com:
+      mitanivalve:
+        k:
+          kimishima:
+            itdddkt:
+              infrastructure: debug
+    org:
+      springframework:
+        web: debug
+        jdbc: debug
